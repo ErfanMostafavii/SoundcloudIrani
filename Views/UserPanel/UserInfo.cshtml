@@ -1,0 +1,70 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutUserPanel.cshtml";
+}
+@using soundcloud_.Models.ViewModels;
+@model UserInfo;
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css"
+          integrity="sha384-PJsj/BTMqILvmcej7ulplguok8ag4xFTPryRq8xevL7eBYSmpXKcbNVuy+P0RMgq" crossorigin="anonymous">
+
+
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link href="~/css/acc.css" rel="stylesheet">
+
+    <style>
+        .nav-tabs .nav-item.show .nav-link,
+        .nav-tabs .nav-link.active {
+            color: rgb(255, 72, 0);
+        }
+
+        .nav-link {
+            color: white;
+        }
+
+            .nav-link:hover {
+                color: rgb(255, 72, 0);
+            }
+    </style>
+
+    <title>حساب کاربری</title>
+</head>
+
+<body style="background-color: #525252;">
+
+  
+    <div class="form-box">
+        <div class="shadow col-5 rounded-3" style="background-color: #949494;">
+            <form class="form-signin">
+                @{
+                    var User = ViewBag.USer;
+                    if (User != null)
+                    {
+                        <h1 class="h3 mb-3 font-weight-normal">اطلاعات شما</h1>
+                        <input type="text" value="@User.name" class="form-control" disabled placeholder="نام">
+                        <input type="text" value="@User.family" class="form-control" disabled placeholder="نام خانوادگی">
+                        <input type="email" value="@User.UserName" class="form-control" disabled placeholder="ایمیل">
+                    }
+
+                }
+
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+
+</body>
+
+</html>

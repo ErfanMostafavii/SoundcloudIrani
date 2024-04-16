@@ -1,0 +1,128 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutUserPanel.cshtml";
+}
+
+@using System.Security.Claims;
+@using soundcloud_.Models.ViewModels;
+@{
+    var userIdentifier = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var userName = Context.User.FindFirst(ClaimTypes.Name)?.Value;
+
+}
+@model MusicViewModel;
+
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css"
+          integrity="sha384-PJsj/BTMqILvmcej7ulplguok8ag4xFTPryRq8xevL7eBYSmpXKcbNVuy+P0RMgq" crossorigin="anonymous">
+
+
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link href="~/css/acc.css" rel="stylesheet">
+
+    <style>
+        .nav-tabs .nav-item.show .nav-link,
+        .nav-tabs .nav-link.active {
+            color: rgb(255, 72, 0);
+        }
+
+        .nav-link {
+            color: white;
+        }
+
+            .nav-link:hover {
+                color: rgb(255, 72, 0);
+            }
+    </style>
+
+    <title>حساب کاربری</title>
+</head>
+
+<body style="background-color: #525252;">
+
+    <div class="m-5 shadow col-5 rounded-3 p-1" style="background-color: #c4c4c4;">
+        <p>
+            سلام {@userName}😍 <br />
+            به سایت ساندکلود ایرانی خوش آمدید.
+        </p>
+        <a asp-action="Index" asp-controller="Home">
+            <button class="btn" style="background-color: rgb(255, 72, 0); color: white;">رفتن به خانه</button>
+        </a>
+    </div>
+
+    <div class="container">
+        <div class="row justify-content-md-center">
+            <!--playlist music start-->
+            <div class="row m-3">
+                <div class=" sf-playlist col-12 rounded-3 shadow p-5">
+                    <div style=" height: 300px; overflow: auto">
+                        <h1 class="text-white">آهنگ های شما </h1>
+                        <br />
+                        <table class="table">
+                            <thead>
+                            <th>#</th>
+                            <th></th>
+                            <th>نام</th>
+                            <th></th>
+                            <th>تاریخ</th>
+                            <th>زمان</th>
+                            <th>وضعیت</th>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int count=1;
+                                    var music = ViewBag.UserMusic;
+                                    foreach (var i in music)
+                                    {
+                                        <tr>
+                                            <td>@count</td>
+                                            <td></td>
+                                            <td>@i.title</td>
+                                            <td></td>
+                                            <td>@i.Date</td>
+                                            <td>@i.MusicTime</td>
+                                           @if (i.status=="موفق")
+                                            {
+                                                <td class="text-center text-success"> <i class="bi bi-check-lg"></i> موفق </td>
+
+                                            }
+                                            else if (i.status=="برسی")
+                                            {
+                                                <td class="text-center text-warning"> <i class="bi bi-clock-history"></i> بررسی </td>
+                                            }
+                                            else if (i.status == "لغو")
+                                            {
+                                                <td class="text-center text-danger"> <i class="bi bi-slash-circle"></i> لغو </td>
+
+                                            }
+                                        </tr>
+                                        count = count + 1;
+                                    }
+                                }
+                               
+                               
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--playlist music end-->
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+
+</body>
+
+</html>

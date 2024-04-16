@@ -1,0 +1,99 @@
+﻿@using System.Security.Claims;
+@{
+    Layout = "~/Views/Shared/_LayoutUserPanel.cshtml";
+    var userIdentifier = Context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    var userName = Context.User.FindFirst(ClaimTypes.Name)?.Value;
+}
+
+@model SaveMusic;
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css"
+          integrity="sha384-PJsj/BTMqILvmcej7ulplguok8ag4xFTPryRq8xevL7eBYSmpXKcbNVuy+P0RMgq" crossorigin="anonymous">
+
+
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link href="~/css/acc.css" rel="stylesheet">
+
+    <style>
+        .nav-tabs .nav-item.show .nav-link,
+        .nav-tabs .nav-link.active {
+            color: rgb(255, 72, 0);
+        }
+
+        .nav-link {
+            color: white;
+        }
+
+            .nav-link:hover {
+                color: rgb(255, 72, 0);
+            }
+    </style>
+
+    <title>حساب کاربری</title>
+</head>
+
+<body style="background-color: #525252;">
+
+   
+  
+    <div class="form-box">
+        <div class="shadow col-5 rounded-3" style="background-color: #949494;">
+            <form asp-action="AddMusic" asp-controller="UserPanel" enctype="multipart/form-data" class="form-signin">
+                <h1 class="h3 mb-3 font-weight-normal">آپلود آهنگ</h1>
+
+                <input asp-for="title" type="text" class="form-control" placeholder="نام آهنگ" required="">
+                <input asp-for="ArticName" type="text" class="form-control" placeholder="نام خواننده" required="">
+                <div class="input-group mb-3">
+                    <label  class="input-group-text" for="inputGroupFile01">آپلود تصویر</label>
+
+                    <input asp-for="MusicImage" type="file" class="form-control" id="inputGroupFile01" accept="image/*" required="">
+                </div>
+                <div class="input-group mb-3">
+                    <label class="input-group-text" for="inputGroupFile01">آپلود آهنگ</label>
+                    <input asp-for="MusicAdress" type="file" class="form-control" id="inputGroupFile01" required="">
+                </div>
+                <input asp-for="USerId" value="@userIdentifier" name="USerId"
+                       type="hidden" />
+                <button class="btn btn-lg btn-block" type="submit" style="background-color: rgb(255, 72, 0); color: white;">
+                    آپلود
+
+                </button>
+                @{
+                    var resAddmusic = ViewBag.AddCarResult;
+                    if (resAddmusic != null)
+                    {
+                        if (resAddmusic.code == 200)
+                        {
+                             <div class="alert alert-success" role="alert">
+                                @resAddmusic.message;
+                        </div>
+                        }else
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @resAddmusic.message;
+                            </div>
+                        }
+                        
+                    }
+                }
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+            crossorigin="anonymous"></script>
+
+</body>
+
+</html>

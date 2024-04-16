@@ -1,0 +1,315 @@
+﻿@{
+    Layout = Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css"
+      integrity="sha384-PJsj/BTMqILvmcej7ulplguok8ag4xFTPryRq8xevL7eBYSmpXKcbNVuy+P0RMgq" crossorigin="anonymous"> -->
+
+    <link rel="stylesheet" href="~/css/bootstrap.rtl.min.css" />
+    <!-- Bootstrap Icon -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+          integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous" />
+
+    <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/bar.css" />
+
+    <title>پلی لیست کاربر</title>
+</head>
+<div class="container-fluid">
+    <div class="row">
+
+        <!--playlist topname start-->
+        <div class="sf-playlist">
+            <div style="margin-top: 2rem;" class="row">
+                @{
+                    var user = ViewBag.user;
+                    if (user!=null)
+                    {
+                       
+                        var name = user.name + " " + user.family;
+                        <div class="col-2 rounded-4">
+                            <input id="userId" value="@user.UserId" name="USerId"
+                           type="hidden" />
+                            <img src="~/images/Users/@user.image" class="img-fluid rounded-4 shadow" />
+                            <div class="col-10">
+                                <h2 class="title">@name</h2>
+                                <button class="btn btn-dark sf-btn-default">
+                                    <span class="fa fa-heart-o"></span>
+                                </button>
+                                <button class="btn btn-dark sf-btn-default">
+                                    <span class="fa fa-ellipsis-h"></span>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+               
+               
+            </div>
+            <br />
+            <!--playlist topname end-->
+            <!--playlist music start-->
+            <div class="row m-1" id="music-box">
+                <div class=" sf-playlist col-12 rounded-3 shadow p-5">
+                    <div style=" height: 300px; overflow: auto">
+                        <table class="table">
+                            <thead>
+                            <th>#</th>
+                            <th>تصویر</th>
+                            <th>نام</th>
+                            <th></th>
+                            <th>زمان</th>
+                            <th>پخش</th>
+                            </thead>
+                            <tbody>
+                                @{
+                                    var musics = ViewBag.music;
+                                    int count = 1;
+                                    if (musics!=null)
+                                    {
+                                        foreach (var i in musics)
+                                        {
+                                            <tr>
+                                                <td>@count</td>
+                                                <td class="digits"> <img src="~/images/Music/@i.musicimage" style="width:100px;" /></td>
+                                                <td>@i.musicname</td>
+                                                <td></td>
+                                                <td>@i.musictime</td>
+                                                <td>
+                                                    <button class="play-button btn btn-primary btn-sm">
+                                                        <i class="bi bi-play-circle-fill"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            count = count + 1;
+                                        }
+                                    }
+                                }
+                                
+                             
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--playlist music end-->
+        </div>
+    </div>
+
+    <!-- music bar start-->
+    <audio id="musicPlayer" class="d-none"></audio>
+    <div class="music-bar">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 song-info">
+                    <img id="songImage" src="" alt="تصویر آهنگ">
+                    <span id="songName"></span>
+                </div>
+                <div class="col-1">
+                    <button id="previousButton" class="btn btn-primary btn-sm">قبلی</button>
+                </div>
+                <div class="col-1">
+                    <button id="playButton" class="btn btn-primary btn-sm">پخش</button>
+                </div>
+                <div class="col-1">
+                    <button id="nextButton" class="btn btn-primary btn-sm">بعدی</button>
+                </div>
+                <div class="col-1">
+                    <button id="repeatButton" class="btn btn-primary btn-sm">تکرار</button>
+                </div>
+                <div class="col-3">
+                    <span id="currentTime" class="text-light">00:00</span> / <span id="duration" class="text-light">00:00</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div id="progressContainer" class="progress-container">
+                        <div id="progressBar" class="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- music bar end-->
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        const songs = [];
+        var id = $("#userId").val();
+
+      
+       
+        $.ajax({
+            type: 'POST',
+            url: '/Home/UserPlaylist_Json',
+            contentType: 'application/x-www-form-urlencoded',
+            dataType: 'json',
+            data: { id: id },
+            success: function (result) {
+
+                // دریافت موفق اطلاعات موزیک‌ها
+                for (var i in result) {
+
+                    songs.push({
+                        name: result[i].musicname,
+                        file: "/musics/" + result[i].musicadress,
+                        image: "/images/Music/" + result[i].musicimage
+                    });
+                }
+
+
+                const musicPlayer = $("#musicPlayer")[0];
+                const playButton = $("#playButton");
+                const currentTimeSpan = $("#currentTime");
+                const durationSpan = $("#duration");
+                const songImage = $("#songImage");
+                const songName = $("#songName");
+                const previousButton = $("#previousButton");
+                const nextButton = $("#nextButton");
+                const repeatButton = $("#repeatButton");
+                const progressBar = $("#progressBar");
+                const progressContainer = $("#progressContainer");
+                const playButtons = $(".play-button");
+
+
+
+                let currentSongIndex = 0;
+                let isRepeatEnabled = false;
+
+                function loadSong(index) {
+                    const song = songs[index];
+                    if (song) {
+                        musicPlayer.src = song.file;
+                        songImage.attr("src", song.image);
+                        songName.text(song.name);
+                        musicPlayer.load();
+                    }
+                }
+
+                function playSong() {
+                    musicPlayer.play();
+                    playButton.text("توقف");
+                }
+
+                function pauseSong() {
+                    musicPlayer.pause();
+                    playButton.text("پخش");
+                }
+
+                function playNextSong() {
+                    currentSongIndex = (currentSongIndex + 1) % songs.length;
+                    loadSong(currentSongIndex);
+                    playSong();
+                }
+
+                function playPreviousSong() {
+                    currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+                    loadSong(currentSongIndex);
+                    playSong();
+                }
+
+                function toggleRepeat() {
+                    isRepeatEnabled = !isRepeatEnabled;
+                    repeatButton.toggleClass("active", isRepeatEnabled);
+                }
+
+                function updateCurrentTime() {
+                    currentTimeSpan.text(formatTime(musicPlayer.currentTime));
+                    updateProgressBar();
+                }
+
+                function updateDuration() {
+                    durationSpan.text(formatTime(musicPlayer.duration));
+                }
+
+                function formatTime(time) {
+                    const minutes = Math.floor(time / 60);
+                    const seconds = Math.floor(time % 60);
+                    return `${padZero(minutes)}:${padZero(seconds)}`;
+                }
+
+                function padZero(number) {
+                    return number.toString().padStart(2, "0");
+                }
+
+                function updateProgressBar() {
+                    const progress = 100 - ((musicPlayer.currentTime / musicPlayer.duration) * 100 || 0);
+                    progressBar.width(`${progress}%`);
+                }
+
+                function setProgress(event) {
+                    const progressBarWidth = progressContainer.width();
+                    const clickPosition = event.clientX - progressContainer.offset().left;
+                    const progress = clickPosition / progressBarWidth;
+                    const currentTime = progress * musicPlayer.duration;
+                    musicPlayer.currentTime = currentTime;
+                    updateCurrentTime();
+                }
+
+                function initializeMusicPlayer() {
+                    loadSong(currentSongIndex);
+
+                    playButton.on("click", function () {
+                        if (musicPlayer.paused) {
+                            playSong();
+                        } else {
+                            pauseSong();
+                        }
+                    });
+
+                    previousButton.on("click", playPreviousSong);
+                    nextButton.on("click", playNextSong);
+                    repeatButton.on("click", toggleRepeat);
+                    progressContainer.on("click", setProgress);
+
+                    musicPlayer.addEventListener("ended", function () {
+                        if (isRepeatEnabled) {
+                            playSong();
+                        } else {
+                            playNextSong();
+                        }
+                    });
+
+                    musicPlayer.addEventListener("timeupdate", updateCurrentTime);
+                    musicPlayer.addEventListener("loadedmetadata", updateDuration);
+
+                    Array.from(playButtons).forEach(function (button, index) {
+                        $(button).on("click", function () {
+                            currentSongIndex = index;
+                            loadSong(currentSongIndex);
+                            playSong();
+                        });
+                    });
+                }
+
+                initializeMusicPlayer();
+
+            },
+            error: function () {
+                alert('Failed to receive the Data');
+                console.log('Failed ');
+            }
+        });
+    });
+
+
+</script>
+<!-- Bootstrap Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
